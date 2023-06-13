@@ -27,6 +27,10 @@ function fillMap() {
     const map = maps[2]
     const mapRows = map.trim().split('\n')
     const mapCols = mapRows.map(row => row.trim().split(''))
+<<<<<<< HEAD
+=======
+    console.log(map, mapRows, mapCols);
+>>>>>>> d73f4854d6c61ae560b4276ac038fd104763f642
     for (let x = 1; x <= 10; x++) {
         for (let y = 1; y <= 10; y++) {
             game.fillText(emojis[mapCols[x - 1][y - 1]], elementSize * y, elementSize * x)        
