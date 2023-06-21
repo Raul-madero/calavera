@@ -6,8 +6,14 @@ const btRight = document.querySelector('#right')
 const btnDown = document.querySelector('#down')
 const playerPosition = {
     x: undefined,
-    y: undefined
+    y: undefined,
 }
+const giftPosition = {
+    x: undefined,
+    y: undefined,
+}
+let map = maps[0]
+let enemyPositions = []
 let canvaSize;
 let elementSize
 
@@ -36,21 +42,32 @@ function setCanvaSize() {
 function fillMap() {
     game.font = elementSize + 'px Verdana'
     game.textAlign = 'end'
-    const map = maps[0]
     const mapRows = map.trim().split('\n')
     const mapCols = mapRows.map(row => row.trim().split(''))
+    game.clearRect(0,0,canvaSize,canvaSize)
+    enemyPositions = []
     mapCols.forEach((row, rowI) => {
         row.forEach((col, colI) => {
             const emoji = emojis[col]
             const posX = elementSize * (colI + 1)
             const posY = elementSize * (rowI + 1)
             if(col == 'O') {
-                playerPosition.x = posX
-                playerPosition.y = posY
+                if(!playerPosition.x && !playerPosition.y) {
+                    playerPosition.x = posX
+                    playerPosition.y = posY
+                }
+            }else if(col == 'I') {
+                giftPosition.x = posX
+                giftPosition.y = posY
+            }else if(col == 'X') {
+                enemyPositions.push({
+                    x: posX,
+                    y: posY,
+                })
             }
-            game.fillText(emojis['PLAYER'], playerPosition.x, playerPosition.y)
             game.fillText(emoji, posX, posY)
         })
+        movePlayer()
     });
     // for (let x = 1; x <= 10; x++) {
     //     for (let y = 1; y <= 10; y++) {
@@ -67,21 +84,58 @@ function fillMap() {
     // game.fillStyle = 'purple'
     // game.textAlign = 'center'
     // game.fillText('Rulax', 100, 100)
-function moveUp(event) {
-    playerPosition.y - 5px
+function moveUp() {
+    if(Math.floor(playerPosition.y - elementSize) < Math.floor(elementSize)) {
+        console.log('Out');
+    }else {
+        playerPosition.y -= elementSize
+        fillMap()
+    }
 }
 function moveLeft() {
-    console.log('Me quiero mover hacia izquierda')
+    if(Math.floor(playerPosition.x - elementSize) < Math.floor(elementSize)) {
+        console.log('Out');
+    }else {
+        playerPosition.x -= elementSize
+        fillMap()
+    }
 }
 function moveRight() {
-    console.log('Me quiero mover hacia derecha')
+    if(Math.floor(playerPosition.x + elementSize) > canvaSize) {
+        console.log('Out');
+    }else {
+        playerPosition.x += elementSize
+        fillMap()
+    }
 }
 function moveDown() {
-    console.log('Me quiero mover hacia abajo')
+    if(Math.floor(playerPosition.y + elementSize) > canvaSize) {
+        console.log('Out');
+    }else {
+        playerPosition.y += elementSize
+        fillMap()
+    }
 }
 function moveKeys(event){
     if(event.key == "ArrowUp") moveUp()
     else if(event.key == "ArrowLeft")  moveLeft()
     else if(event.key == "ArrowRight")  moveRight()
     else if(event.key == "ArrowDown") moveDown()
+}
+function movePlayer(){
+    const giftColisionX = Math.floor(playerPosition.x) == Math.floor(giftPosition.x)
+    const giftColisionY = Math.floor(playerPosition.y) == Math.floor(giftPosition.y)
+    const giftCollision = giftColisionX && giftColisionY
+    if(giftCollision) {
+        map = map + 1
+    }
+    const enemyCollision = enemyPositions.find(enemy => {
+        const enemyColissionX = Math.floor(enemy.x) == Math.floor(playerPosition.x)
+        const enemyColisionY = Math.floor(enemy.y) == Math.floor(playerPosition.y)
+        return enemyColissionX && enemyColisionY
+    })
+    if(enemyCollision) {
+        console.log('Chocaste con una bomba');
+    }
+    game.fillText(emojis['PLAYER'], playerPosition.x, playerPosition.y)
 }
