@@ -12,7 +12,7 @@ const giftPosition = {
     x: undefined,
     y: undefined,
 }
-let map = maps[0]
+let level = 0;
 let enemyPositions = []
 let canvaSize;
 let elementSize
@@ -42,7 +42,11 @@ function setCanvaSize() {
 function fillMap() {
     game.font = elementSize + 'px Verdana'
     game.textAlign = 'end'
-    const mapRows = map.trim().split('\n')
+    const map = maps[level];
+    if(map > maps.length) {
+        gameWin()
+    }
+    const mapRows = map.trim().split('\n');
     const mapCols = mapRows.map(row => row.trim().split(''))
     game.clearRect(0,0,canvaSize,canvaSize)
     enemyPositions = []
@@ -85,6 +89,7 @@ function fillMap() {
     // game.textAlign = 'center'
     // game.fillText('Rulax', 100, 100)
 function moveUp() {
+    console.log('Me quiero mover arriba');
     if(Math.floor(playerPosition.y - elementSize) < Math.floor(elementSize)) {
         console.log('Out');
     }else {
@@ -117,17 +122,30 @@ function moveDown() {
     }
 }
 function moveKeys(event){
-    if(event.key == "ArrowUp") moveUp()
-    else if(event.key == "ArrowLeft")  moveLeft()
-    else if(event.key == "ArrowRight")  moveRight()
-    else if(event.key == "ArrowDown") moveDown()
+    switch(event.key) {
+        case 'ArrowUp':
+            moveUp()
+            break
+        case 'ArrowDown':
+            moveDown()
+            break
+        case 'ArrowLeft':
+            moveLeft()
+            break
+        case 'ArrowRight':
+            moveRight()
+            break
+        default:
+            break
+    }
 }
 function movePlayer(){
     const giftColisionX = Math.floor(playerPosition.x) == Math.floor(giftPosition.x)
     const giftColisionY = Math.floor(playerPosition.y) == Math.floor(giftPosition.y)
     const giftCollision = giftColisionX && giftColisionY
     if(giftCollision) {
-        map = map + 1
+        console.log('chocaste regalo');
+        // levelWin()
     }
     const enemyCollision = enemyPositions.find(enemy => {
         const enemyColissionX = Math.floor(enemy.x) == Math.floor(playerPosition.x)
@@ -135,7 +153,18 @@ function movePlayer(){
         return enemyColissionX && enemyColisionY
     })
     if(enemyCollision) {
-        console.log('Chocaste con una bomba');
+        levelFail()
     }
     game.fillText(emojis['PLAYER'], playerPosition.x, playerPosition.y)
+}
+function levelWin() {
+    level++
+    console.log(level);
+    fillMap()
+}
+function gameWin() {
+    console.log('Terminaste el juego');
+}
+function levelFail() {
+    console.log('Chocaste con una bomba');
 }
