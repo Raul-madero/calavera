@@ -5,11 +5,15 @@ const btnLeft = document.querySelector('#left');
 const btnRight = document.querySelector('#right');
 const btnDown = document.querySelector('#down');
 const spanLives = document.querySelector('#lives')
+const spanTime = document.querySelector('#time')
 
 let canvasSize;
 let elementsSize;
 let level = 0;
 let lives = 3;
+let timeStart
+let timePlayer
+let timeInterval
 
 const playerPosition = {
     x: undefined,
@@ -51,6 +55,10 @@ function startGame() {
         return;
     }
 
+    if(!timeStart) {
+        timeStart = Date.now()
+        timeInterval = setInterval(showTime, 100)
+    }
     const mapRows = map.trim().split('\n');
     const mapRowCols = mapRows.map(row => row.trim().split(''));
 
@@ -81,6 +89,7 @@ function startGame() {
         game.fillText(emoji, posX, posY);
         });
         });
+    showTime()
     fillLives()
     movePlayer();
 }
@@ -118,6 +127,7 @@ function levelFail() {
     playerPosition.y = undefined
     lives--
     if(lives == 0) {
+        timeStart = undefined
         lives = 3
         level = 0
         startGame()
@@ -130,7 +140,12 @@ function fillLives() {
     spanLives.innerHTML = emojis['HEART'].repeat(lives)
 }
 
+function showTime() {
+    spanTime.innerHTML = Math.floor((Date.now() - timeStart) / 1000) + ' segundos'
+}
+
 function gameWin() {
+    clearInterval(timeInterval)
     console.log('¡Terminaste el juego!');
 }
 
