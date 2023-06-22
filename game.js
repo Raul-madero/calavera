@@ -34,7 +34,6 @@ const giftPosition = {
     y: undefined,
 };
 let enemyPositions = [];
-
 function setCanvasSize() {
     if (window.innerHeight > window.innerWidth) {
         canvasSize = window.innerWidth * 0.8;
