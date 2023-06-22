@@ -7,6 +7,8 @@ const btnDown = document.querySelector('#down');
 const spanLives = document.querySelector('#lives')
 const spanTime = document.querySelector('#time')
 const spanMinutes = document.querySelector('#minutes')
+const spanRecord = document.querySelector('#record')
+const record = localStorage.getItem('newRecord')
 
 let canvasSize;
 let elementsSize;
@@ -15,6 +17,8 @@ let lives = 3;
 let timeStart
 let timePlayer
 let timeInterval
+let minutes = 0
+let totalTime
 
 const playerPosition = {
     x: undefined,
@@ -57,8 +61,7 @@ function startGame() {
     }
 
     if(!timeStart) {
-        timeStart = Date.now()
-        timeInterval = setInterval(showTime, 100)
+        timeCount()
     }
     const mapRows = map.trim().split('\n');
     const mapRowCols = mapRows.map(row => row.trim().split(''));
@@ -90,6 +93,7 @@ function startGame() {
         game.fillText(emoji, posX, posY);
         });
         });
+        spanRecord.innerHTML = record
     showTime()
     fillLives()
     movePlayer();
@@ -141,19 +145,37 @@ function fillLives() {
     spanLives.innerHTML = emojis['HEART'].repeat(lives)
 }
 
+function timeCount() {
+    timeStart = Date.now()
+    timeInterval = setInterval(showTime, 100)
+}
+
 function showTime() {
     let seconds = Math.floor((Date.now() - timeStart) / 1000)
-    let minutes = 0
     if(seconds <= 59) {
-        spanTime.innerHTML = seconds + ' segundos'
+        spanTime.innerHTML = seconds
     }else {
+        clearInterval(timeInterval)
+        timeCount()
+        seconds = Math.floor((Date.now() - timeStart) / 1000)
         minutes++
         spanMinutes.innerHTML = minutes + ':'
         spanTime.innerHTML = seconds
     }
+    totalTime = (minutes * 60) + seconds
+}
+
+function saveRecord() {
+    if(localStorage.getItem('newRecord') == undefined) {
+        localStorage.setItem('newRecord', totalTime + ' segundos')
+    }else if(localStorage.getItem('newRecord') > totalTime) {
+        localStorage.setItem('newRecord', totalTime + ' segundos')
+    }
+    
 }
 
 function gameWin() {
+    saveRecord()
     clearInterval(timeInterval)
     console.log('¡Terminaste el juego!');
 }
