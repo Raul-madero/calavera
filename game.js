@@ -9,7 +9,6 @@ const spanTime = document.querySelector('#time')
 const spanMinutes = document.querySelector('#minutes')
 const spanRecord = document.querySelector('#record')
 const record = localStorage.getItem('newRecord')
-
 let canvasSize;
 let elementsSize;
 let level = 0;
@@ -19,7 +18,13 @@ let timePlayer
 let timeInterval
 let minutes = 0
 let totalTime
-
+window.addEventListener('load', setCanvasSize);
+window.addEventListener('resize', setCanvasSize);
+window.addEventListener('keydown', moveByKeys);
+btnUp.addEventListener('click', moveUp);
+btnLeft.addEventListener('click', moveLeft);
+btnRight.addEventListener('click', moveRight);
+btnDown.addEventListener('click', moveDown);
 const playerPosition = {
     x: undefined,
     y: undefined,
@@ -29,9 +34,6 @@ const giftPosition = {
     y: undefined,
 };
 let enemyPositions = [];
-
-window.addEventListener('load', setCanvasSize);
-window.addEventListener('resize', setCanvasSize);
 
 function setCanvasSize() {
     if (window.innerHeight > window.innerWidth) {
@@ -47,7 +49,6 @@ function setCanvasSize() {
 
     startGame();
 }
-
 function startGame() {
 
     game.font = elementsSize + 'px Verdana';
@@ -98,7 +99,6 @@ function startGame() {
     fillLives()
     movePlayer();
 }
-
 function movePlayer() {
     const giftCollisionX = playerPosition.x.toFixed(3) == giftPosition.x.toFixed(3);
     const giftCollisionY = playerPosition.y.toFixed(3) == giftPosition.y.toFixed(3);
@@ -120,12 +120,10 @@ function movePlayer() {
 
     game.fillText(emojis['PLAYER'], playerPosition.x, playerPosition.y);
 }
-
 function levelWin() {
     level++;
     startGame();
 }
-
 function levelFail() {
     console.log('Chocaste contra un enemigo');
     playerPosition.x = undefined
@@ -140,16 +138,13 @@ function levelFail() {
         startGame()
     }
 }
-
 function fillLives() {
     spanLives.innerHTML = emojis['HEART'].repeat(lives)
 }
-
 function timeCount() {
     timeStart = Date.now()
     timeInterval = setInterval(showTime, 100)
 }
-
 function showTime() {
     let seconds = Math.floor((Date.now() - timeStart) / 1000)
     if(seconds <= 59) {
@@ -164,7 +159,6 @@ function showTime() {
     }
     totalTime = (minutes * 60) + seconds
 }
-
 function saveRecord() {
     if(localStorage.getItem('newRecord') == undefined) {
         localStorage.setItem('newRecord', totalTime + ' segundos')
@@ -173,19 +167,10 @@ function saveRecord() {
     }
     
 }
-
 function gameWin() {
     saveRecord()
     clearInterval(timeInterval)
-    console.log('¡Terminaste el juego!');
 }
-
-window.addEventListener('keydown', moveByKeys);
-btnUp.addEventListener('click', moveUp);
-btnLeft.addEventListener('click', moveLeft);
-btnRight.addEventListener('click', moveRight);
-btnDown.addEventListener('click', moveDown);
-
 function moveByKeys(event) {
     if (event.key == 'ArrowUp') moveUp();
     else if (event.key == 'ArrowLeft') moveLeft();
