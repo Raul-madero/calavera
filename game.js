@@ -6,6 +6,7 @@ const btnRight = document.querySelector('#right');
 const btnDown = document.querySelector('#down');
 const spanLives = document.querySelector('#lives')
 const spanTime = document.querySelector('#time')
+const spanMinutes = document.querySelector('#minutes')
 
 let canvasSize;
 let elementsSize;
@@ -141,7 +142,15 @@ function fillLives() {
 }
 
 function showTime() {
-    spanTime.innerHTML = Math.floor((Date.now() - timeStart) / 1000) + ' segundos'
+    let seconds = Math.floor((Date.now() - timeStart) / 1000)
+    let minutes = 0
+    if(seconds <= 59) {
+        spanTime.innerHTML = seconds + ' segundos'
+    }else {
+        minutes++
+        spanMinutes.innerHTML = minutes + ':'
+        spanTime.innerHTML = seconds
+    }
 }
 
 function gameWin() {
